@@ -1,0 +1,250 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  margin: 0px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 100%;
+  vertical-align: baseline;
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-shadow: 0px -5px 0px 0px rgba(255, 255, 255, 0.6) inset;
+}
+
+body {
+    display:block;
+  position: relative;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+  background: #f5f5f5;
+  color: #4d4d4d;
+  min-width: 230px;
+  max-width: 550px;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 300;
+}
+
+li {
+  list-style-type: none;
+}
+
+input[type="text"]:focus {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+::placeholder {
+  font-family: "Roboto", sans-serif;
+  font-style: italic;
+  font-weight: 600;
+  color: #edefef;
+  font-size: 1.5rem;
+}
+
+.todo-item {
+  height: 70px;
+  width: 100%;
+  border-bottom: 0.5px solid #e9e9e9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.juju {
+  border-bottom: 0.5px solid #e9e9e9;
+}
+
+.todo-list {
+  box-shadow: 4px 4px 8px -6px rgba(34, 60, 80, 1);
+  background-color: white;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+button:hover {
+  border: 1px solid #ead8d8;
+}
+
+button:focus {
+  border: 2px solid #ead8d8;
+}
+
+.filtered-buttons {
+    display: inline-flex;
+    justify-content: space-between;
+    margin: 10px
+}
+
+.heading-text {
+    margin-bottom: 0px;
+}
+
+.input_form {
+  background-color: #fefefe;
+  border: 1px solid transparent;
+  height: 60px;
+  width: 100%;
+  padding-left: 30px;
+}
+
+:focus {
+  outline: 0;
+}
+
+.main-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;    
+}
+
+.todosHeader {
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  margin-top: 30px;
+  height: 60px;
+  font-size: 80px;
+  color: #ead8d8;
+}
+
+.danger-icon {
+  display: none;
+  content: "";
+  background-repeat: no-repeat;
+}
+
+.todo-danger {
+  content: "";
+  display: inline-block;
+  height: 25px;
+  width: 30px;
+  margin: 0 5px;
+  background-image: url(/public/cross.png);
+  background-repeat: no-repeat;
+  border: none;
+  top: 75px;
+  opacity: 0;
+  z-index: -1;
+}
+
+.todo-item:hover + label::before {
+  display: none;
+}
+
+.todo-item:hover > .todo-danger {
+  opacity: 1;
+  z-index: 1;
+}
+
+.custom-checkbox:checked + .todo-item-label {
+ text-decoration: line-through;
+}
+
+#icon-checkbox {
+  top: 10px;
+  display: none;
+  position: absolute;
+}
+
+.todo-list {
+  background: #fff;
+  box-shadow:
+    0 1px 1px rgba(0,0,0,0.15),
+    0 10px 0 -5px #fff,
+    0 10px 1px -4px rgba(0,0,0,0.15),
+    0 20px 0 -10px #fff,
+    0 20px 1px -9px rgba(0,0,0,0.15);
+}
+
+.chevron-bottom {
+  position: absolute;
+  border-style: solid;
+  border-width: 0.25em 0.25em 0 0;
+  content: "";
+  display: inline-block;
+  height: 0.7em;
+  left: 0.15em;
+  position: absolute;
+  width: 30px;
+  top: 77px;
+  left: 8px;
+  transform: rotate(135deg);
+  vertical-align: top;
+  width: 0.7em;
+}
+
+.todo-text {
+  width: 95%;
+  height: 80%;
+  border: 1px solid transparent;
+}
+
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid gray;
+  border-radius: 20px;
+  margin-right: 5px;
+  margin-left: 5px;
+  vertical-align: sub;
+}
+
+.custom-checkbox::before {
+  content: "";
+  display: inline-block;
+  width: 19px;
+  height: 19px;
+  background-image: url("/public/check.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  margin-top: 1px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 0.2s ease-in;
+}
+
+.todo-item-checkbox:checked + .custom-checkbox::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.todo-item-checkbox {
+  display: none;
+}
+
+li[completed="false"] label {
+color: black;
+font-size: 22px;
+}
+
+li[completed="true"] label {
+    font-size: 22px;
+    color: gray;
+    text-decoration: line-through;
+}
+
+.black-chevron {
+  color: black
+}
+
+.gray-chevron {
+  color: #e9e9e9;
+}
