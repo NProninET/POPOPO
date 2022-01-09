@@ -4,18 +4,33 @@ import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 
-export function App(props) {
+export function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
   const [checked, setChecked] = useState(false);
+  // const [count, setCount] = useState(0)
 
+  const getMyTasks = async () => {
+    let response = await fetch("http://localhost:8000/api/todo")
+    return await response.json()
+  }
+  // console.log(count)
   useEffect(() => {
-  fetch("http://localhost:8000/api/todo")
-    .then(res => res.json())
-    .then(result => setTasks(result))
-}, []);
+    // fetch("http://localhost:8000/api/todo")
+    //   .then(res => res.json())
+    //   .then(result => setTasks(result))
+    // async function go() {
+    // let response = await 
+    // axios.get("http://localhost:8000/api/todo").then(data => setTasks(data.data))
+    // setTasks(response)
+    // console.log(count)
+    getMyTasks().then(res => setTasks(res))
+    // go()
+  }, []);
 
-console.log(tasks)
+  // console.log(tasks)
+  console.log(tasks.length)
+
 
   const FILTER_MAP = {
     All: () => true,
@@ -49,41 +64,44 @@ console.log(tasks)
     ));
 
   function deleteTask(id) {
-    const remainingTasks = tasks.filter((task) => id !== task.id);
-    setTasks(remainingTasks);
+    // const remainingTasks = tasks.filter((task) => id !== task.id);
+    // setTasks(remainingTasks);
+    axios.delete(`http://localhost:8000/api/todo/${id}`)
   }
 
-  function editTask(id, newName) {
-    const editedTaskList = tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, title: newName };
-      }
-      return task;
-    });
-    setTasks(editedTaskList);
+  function editTask(id, title) {
+    // const editedTaskList = tasks.map((task) => {
+    //   if (id === task.id) {
+    //     return { ...task, title: newName };
+    //   }
+    //   return task;
+    // });
+    // setTasks(editedTaskList);
+    axios.put(`http://localhost:8000/api/todo/${id}`, { title: title }).then(response => response)
   }
 
   const tasksNoun = taskList.length !== 1 ? "items" : "item";
-  const headingText = `${
-    tasks.filter((task) => task.completed === false).length
-  } ${tasksNoun} left`;
+  const headingText = `${tasks.filter((task) => task.completed === false).length
+    } ${tasksNoun} left`;
 
   function addTask(title) {
     // const newTask = { id: Date.now(), title: title, completed: false };
     // setTasks([...tasks, newTask]);
 
-  fetch("http://localhost:8000/api/todo", {
-  method: 'POST',
-  headers: {
-    "Content-type": "application/json"
-  },
-  body: JSON.stringify({
-    title: title,
-    completed: false
-  })
-})
-.then(response => response.json())
-.then(data => JSON.stringify(data))
+    // fetch("http://localhost:8000/api/todo", {
+    //   method: 'POST',
+    //   headers: {
+    //     "Content-type": "application/json"
+    //   },
+    //   body: JSON.stringify({
+    //     title: title,
+    //     completed: false
+    //   })
+    // })
+    //   .then(response => response.json())
+    //   .then(data => JSON.stringify(data))
+
+    axios.post("http://localhost:8000/api/todo", { title: title, completed: false }).then(response => response)
   }
 
   function doneTodos() {
@@ -91,21 +109,22 @@ console.log(tasks)
   }
 
   function toggleTaskCompleted(id) {
-    const updatedTasks = tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, completed: !task.completed };
-      }
-      return task;
-    });
+    // const updatedTasks = tasks.map((task) => {
+    //   if (id === task.id) {
+    //     return { ...task, completed: !task.completed };
+    //   }
+    //   return task;
+    // });
 
-    setTasks(updatedTasks);
+    // setTasks(updatedTasks);
 
-    const completedTasks = updatedTasks.every((c) => c.completed === true);
-    if (completedTasks) {
-      setChecked(true);
-    } else {
-      setChecked(false);
-    }
+    // const completedTasks = updatedTasks.every((c) => c.completed === true);
+    // if (completedTasks) {
+    //   setChecked(true);
+    // } else {
+    //   setChecked(false);
+    // }
+    axios.put(`http://localhost:8000/api/todo/${id}`, { completed: true }).then(response => response)
   }
 
   const black = (
