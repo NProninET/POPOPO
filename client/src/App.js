@@ -49,6 +49,8 @@ export function App() {
     />
   ));
 
+  // console.log(filterList)
+
   const taskList = tasks
     .filter(FILTER_MAP[filter])
     .map((task) => (
@@ -101,7 +103,7 @@ export function App() {
     //   .then(response => response.json())
     //   .then(data => JSON.stringify(data))
 
-    axios.post("http://localhost:8000/api/todo", { title: title, completed: false }).then(response => response)
+    axios.post("http://localhost:8000/api/todo", { title: title }).then(response => response)
   }
 
   function doneTodos() {
@@ -109,22 +111,22 @@ export function App() {
   }
 
   function toggleTaskCompleted(id) {
-    // const updatedTasks = tasks.map((task) => {
-    //   if (id === task.id) {
-    //     return { ...task, completed: !task.completed };
-    //   }
-    //   return task;
-    // });
+    const updatedTasks = tasks.map((task) => {
+      if (id === task.id) {
+        return { ...task, completed: !task.completed };
+      }
+      return task;
+    });
 
-    // setTasks(updatedTasks);
+    setTasks(updatedTasks);
 
-    // const completedTasks = updatedTasks.every((c) => c.completed === true);
-    // if (completedTasks) {
-    //   setChecked(true);
-    // } else {
-    //   setChecked(false);
-    // }
-    axios.put(`http://localhost:8000/api/todo/${id}`, { completed: true }).then(response => response)
+    const completedTasks = updatedTasks.every((c) => c.completed === true);
+    if (completedTasks) {
+      setChecked(true);
+    } else {
+      setChecked(false);
+    }
+    // axios.put(`http://localhost:8000/api/todo/${id}`, { completed: true }).then(response => response)
   }
 
   const black = (

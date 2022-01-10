@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-button {
+/* button {
   margin: 0px;
   padding: 0;
   border: 0;
@@ -19,7 +19,7 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-shadow: 0px -5px 0px 0px rgba(255, 255, 255, 0.6) inset;
-}
+} */
 
 body {
     display:block;
