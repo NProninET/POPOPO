@@ -28,6 +28,10 @@ exports.putUpdateTodo = (req, res) => {
     );
 };
 
+// exports.putUpdateCompleteTodo = (req, res) => {
+//   Todo.findOne({_id: req.params, params.id}), function(err, todo)
+// };
+
 exports.deleteTodo = (req, res) => {
   Todo.findByIdAndRemove(req.params.id, req.body)
     .then((data) => res.json({ message: "Todo deleted successfully", data }))
