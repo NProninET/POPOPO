@@ -4,7 +4,7 @@ exports.getAllTodo = (req, res) => {
   Todo.find()
     .then((todo) => res.json(todo))
     .catch((err) =>
-      res.status(404).json({ message: "Todo not found", error: err.message })
+      res.status(400).json({ message: "Todo not found", error: err.message })
     );
 };
 
@@ -28,14 +28,34 @@ exports.putUpdateTodo = (req, res) => {
     );
 };
 
-// exports.putUpdateCompleteTodo = (req, res) => {
-//   Todo.findOne({_id: req.params, params.id}), function(err, todo)
-// };
+exports.updateAllTodos = (req, res) => {
+  Todo.updateMany(
+    { completed: !req.body.allChecked },
+    { $set: { completed: req.body.allChecked } }
+  )
+    .then((data) => res.json({ message: "Todos updated successfully", data }))
+    .catch((err) =>
+      res
+        .status(400)
+        .json({ message: "Failed to update Todos", error: err.message })
+    );
+};
+
+exports.deleteCompletedTodos = (req, res) => {
+  Todo.deleteMany({ completed: true })
+    .then((data) => res.json({ message: "Completed Todos deleted", data }))
+    .catch((err) =>
+      res.status(400).json({
+        message: "Failed to delete completed Todos",
+        error: err.message,
+      })
+    );
+};
 
 exports.deleteTodo = (req, res) => {
   Todo.findByIdAndRemove(req.params.id, req.body)
     .then((data) => res.json({ message: "Todo deleted successfully", data }))
     .catch((err) =>
-      res.status(404).json({ message: "book not found", error: err.message })
+      res.status(404).json({ message: "Todo not found", error: err.message })
     );
 };

@@ -7,13 +7,13 @@ import Todo from "./components/Todo";
 export function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
-  const [checked, setChecked] = useState(false);
-  // const [count, setCount] = useState(0)
 
-  const getMyTasks = async () => {
-    const response = await axios.get("http://localhost:8000/api/todo");
+  const apiURI = "http://localhost:8000/api/todo";
+
+  async function getMyTasks() {
+    const response = await axios.get(apiURI);
     setTasks(response.data);
-  };
+  }
 
   useEffect(() => {
     getMyTasks();
@@ -44,105 +44,86 @@ export function App() {
         id={task._id}
         title={task.title}
         completed={task.completed}
-        toggleTaskCompleted={toggleTaskCompleted}
+        toggleCompletedTask={toggleCompletedTask}
         deleteTask={deleteTask}
         editTask={editTask}
       />
     ));
 
-  function deleteTask(id) {
-    axios.delete(`http://localhost:8000/api/todo/${id}`).then((response) => {
+  async function deleteTask(id) {
+    await axios.delete(`${apiURI}/${id}`).then((response) => {
       const del = tasks.filter((task) => id !== task._id);
       setTasks(del);
-      console.log(del);
     });
   }
 
-  function editTask(id, newName) {
-    axios
-      .put(`http://localhost:8000/api/todo/${id}`, { title: newName })
-      .then((response) => {
-        const editedTaskList = tasks.map((task) => {
+  async function editTask(id, newName) {
+    await axios.put(`${apiURI}/${id}`, { title: newName }).then(() => {
+      const editedTaskList = tasks.map((task) => {
+        if (id === task._id) {
+          return { ...task, title: newName.trim() };
+        }
+        return task;
+      });
+      setTasks(editedTaskList);
+    });
+  }
+
+  async function addTask(title) {
+    await axios.post(`${apiURI}`, { title: title }).then((response) => {
+      const newTask = response.data.data;
+      setTasks([...tasks, newTask]);
+    });
+  }
+
+  async function deleteCompletedTasks() {
+    await axios.delete(apiURI);
+    setTasks(tasks.filter((todoItem) => !todoItem.completed));
+  }
+
+  async function toggleCompletedTask(id, completed) {
+    await axios
+      .put(`${apiURI}/${id}`, { completed: !completed })
+      .then((res) => {
+        const updatedTasks = tasks.map((task) => {
           if (id === task._id) {
-            return { ...task, title: newName };
+            return { ...task, completed: !task.completed };
           }
           return task;
         });
-        setTasks(editedTaskList);
+        setTasks(updatedTasks);
       });
-  }
-
-  function addTask(title) {
-    axios
-      .post("http://localhost:8000/api/todo", { title: title })
-      .then((response) => {
-        const newTask = response.data.data;
-        console.log(newTask);
-        setTasks([...tasks, newTask]);
-      });
-  }
-
-  function doneTodos() {
-    setTasks(tasks.filter((todoItem) => todoItem.completed === false));
-  }
-
-  function toggleTaskCompleted(id,) {
-    const updatedTasks = tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, completed: !task.completed };
-      }
-      return task;
-    });
-
-    setTasks(updatedTasks);
-
-    const completedTasks = updatedTasks.every((c) => c.completed === true);
-    if (completedTasks) {
-      setChecked(true);
-    } else {
-      setChecked(false);
-    }
   }
 
   const tasksNoun = taskList.length !== 1 ? "items" : "item";
   const headingText = `${
-    tasks.filter((task) => task.completed === false).length
+    tasks.filter((task) => !task.completed).length
   } ${tasksNoun} left`;
 
-  const black = (
-    <label
-      className="chevron-bottom black-chevron"
-      htmlFor="icon-checkbox"
-    ></label>
-  );
+  // const black = (
+  //   <label
+  //     className="chevron-bottom black-chevron"
+  //     htmlFor="icon-checkbox"
+  //   ></label>
+  // );
 
-  const gray = (
-    <label
-      className="chevron-bottom gray-chevron"
-      htmlFor="icon-checkbox"
-    ></label>
-  );
+  // const gray = (
+  //   <label
+  //     className="chevron-bottom gray-chevron"
+  //     htmlFor="icon-checkbox"
+  //   ></label>
+  // );
 
-  function checkAll() {
-    const checked = tasks.some((c) => c.completed === true);
-    const notChecked = tasks.every((c) => c.completed === false);
-    const abcChecked = tasks.every((c) => c.completed === true);
+  const allChecked = tasks.every((c) => c.completed);
 
-    if (abcChecked) {
-      setChecked(false);
+  async function checkAll() {
+    await axios.put(`${apiURI}`, { allChecked: !allChecked }).then((res) => {
       setTasks(
         tasks.map((d) => {
-          return { ...d, completed: false };
+          return { ...d, completed: !allChecked };
         })
       );
-    } else if (checked || notChecked) {
-      setChecked(true);
-      setTasks(
-        tasks.map((d) => {
-          return { ...d, completed: true };
-        })
-      );
-    }
+    });
   }
 
   return (
@@ -155,7 +136,7 @@ export function App() {
           <div className="main-buttons">
             <div className="heading-text">{headingText}</div>
             <div className="filter-buttons">{filterList}</div>
-            <button className="clear-all" onClick={doneTodos}>
+            <button className="clear-all" onClick={deleteCompletedTasks}>
               Clear completed
             </button>
           </div>
@@ -170,7 +151,15 @@ export function App() {
               className="allToggler"
               onClick={checkAll}
             ></input>
-            {checked ? black : gray}
+            <label
+              className={
+                allChecked
+                  ? "chevron-bottom black-chevron"
+                  : "chevron-bottom gray-chevron"
+              }
+              htmlFor="icon-checkbox"
+            ></label>
+            {/* {allChecked ? black : gray} */}
           </div>
         ) : (
           <div></div>
