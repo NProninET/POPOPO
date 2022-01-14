@@ -4,12 +4,16 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Todo(props) {
   const [isEditing, setEditing] = useState(false);
-  const [active, setActive] = useState(false);
   const [newTitle, setNewTitle] = useState(props.title);
   const [title, setTitle] = useState(props.title);
 
   function handleChange(e) {
-    toast.warning("Editing...", { toastId: "Edit", hideProgressBar: true });
+    const toastId = "Edit";
+    toast.warning("Editing...", {
+      toastId,
+      hideProgressBar: true,
+      autoClose: false,
+    });
     setNewTitle(e.target.value);
   }
 
@@ -29,6 +33,7 @@ function Todo(props) {
   function cancelChanges() {
     setNewTitle(title);
     setEditing(false);
+    toast.dismiss("Edit");
   }
 
   const editingTemplate = (

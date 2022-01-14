@@ -86,6 +86,7 @@ export function App() {
         hideProgressBar: true,
       });
     });
+    toast.dismiss("Edit");
   }
 
   async function deleteCompletedTasks() {
