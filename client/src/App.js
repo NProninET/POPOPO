@@ -75,6 +75,7 @@ export function App() {
       });
       setTasks(editedTaskList);
     });
+    toast.dismiss("Edit");
   }
 
   async function addTask(title) {
@@ -86,7 +87,6 @@ export function App() {
         hideProgressBar: true,
       });
     });
-    toast.dismiss("Edit");
   }
 
   async function deleteCompletedTasks() {
