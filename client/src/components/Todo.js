@@ -1,25 +1,28 @@
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Todo(props) {
   const [isEditing, setEditing] = useState(false);
+  const [active, setActive] = useState(false);
   const [newTitle, setNewTitle] = useState(props.title);
   const [title, setTitle] = useState(props.title);
 
   function handleChange(e) {
+    toast.warning("Editing...", { toastId: "Edit", hideProgressBar: true });
     setNewTitle(e.target.value);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     if (newTitle.trim() === "") {
-      console.log("new title === ''");
-      // setTitle(title);
       setEditing(false);
     } else {
-      console.log("trimmed title", newTitle);
       props.editTask(props.id, newTitle.trim());
+
       setTitle(newTitle.trim());
       setEditing(false);
+      toast.info("Todo has been updated", { hideProgressBar: true });
     }
   }
 
@@ -81,7 +84,7 @@ function Todo(props) {
   return (
     <li
       className="todo-item-2"
-      onDoubleClick={() => setEditing(true)}
+      // onDoubleClick={() => setEditing(true)}
       completed={props.completed ? "true" : "false"}
     >
       {isEditing ? editingTemplate : viewTemplate}

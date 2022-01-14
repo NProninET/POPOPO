@@ -3,10 +3,14 @@ import axios from "axios";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
+
+  toast.configure();
 
   const apiURI = "http://localhost:8000/api/todo";
 
@@ -51,9 +55,13 @@ export function App() {
     ));
 
   async function deleteTask(id) {
-    await axios.delete(`${apiURI}/${id}`).then((response) => {
-      const del = tasks.filter((task) => id !== task._id);
-      setTasks(del);
+    await axios.delete(`${apiURI}/${id}`).then(() => {
+      const deleteTask = tasks.filter((task) => id !== task._id);
+      setTasks(deleteTask);
+      toast.error("Todo deleted successfully", {
+        position: toast.POSITION.TOP_RIGHT,
+        hideProgressBar: true,
+      });
     });
   }
 
@@ -73,12 +81,21 @@ export function App() {
     await axios.post(`${apiURI}`, { title: title }).then((response) => {
       const newTask = response.data.data;
       setTasks([...tasks, newTask]);
+      toast.success(`${title} added successfully`, {
+        position: toast.POSITION.TOP_RIGHT,
+        hideProgressBar: true,
+      });
     });
   }
 
   async function deleteCompletedTasks() {
-    await axios.delete(apiURI);
-    setTasks(tasks.filter((todoItem) => !todoItem.completed));
+    await axios
+      .delete(apiURI)
+      .then(setTasks(tasks.filter((todoItem) => !todoItem.completed)));
+    toast.error("Todos deleted successfully", {
+      position: toast.POSITION.TOP_RIGHT,
+      hideProgressBar: true,
+    });
   }
 
   async function toggleCompletedTask(id, completed) {
@@ -99,20 +116,6 @@ export function App() {
   const headingText = `${
     tasks.filter((task) => !task.completed).length
   } ${tasksNoun} left`;
-
-  // const black = (
-  //   <label
-  //     className="chevron-bottom black-chevron"
-  //     htmlFor="icon-checkbox"
-  //   ></label>
-  // );
-
-  // const gray = (
-  //   <label
-  //     className="chevron-bottom gray-chevron"
-  //     htmlFor="icon-checkbox"
-  //   ></label>
-  // );
 
   const allChecked = tasks.every((c) => c.completed);
 
