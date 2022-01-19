@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addTask } from "../reducers/actions";
 
 function Form(props) {
   const [name, setName] = useState("");
+
+  const dispatch = useDispatch()
 
   function handleChange(e) {
     const value = e.target.value;
@@ -11,7 +15,7 @@ function Form(props) {
   function handleSubmit(e) {
     e.preventDefault();
     if (name.trim().length) {
-      props.addTask(name.trim());
+      dispatch(addTask(name.trim()));
       setName("");
     } else {
       setName("");

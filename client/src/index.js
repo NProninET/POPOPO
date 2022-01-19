@@ -1,28 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom";
+import thunk from "redux-thunk";
+import { createStore, compose, applyMiddleware } from "redux";
+import rootReducer from "./reducers/rootReducer"
+import { Provider } from "react-redux";
 
-const DATA = [
-  // { name: "Купить хлеб", completed: false},
-  // { name: "Пропылесосить", completed: false},
-  // { name: "Помыть посуду", completed: false}
-]
+
+import "./index.css";
+import App from "./App";
+
+const store = createStore(rootReducer, compose(
+    applyMiddleware(
+      thunk
+    ),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  ));
 
 ReactDOM.render(
-  <App tasks={DATA} />,
-  document.getElementById('root')
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
 );
-
-// fetch("http://localhost:8000/api/todo", {
-//   method: 'POST',
-//   headers: {
-//     "Content-type": "application/json"
-//   },
-//   body: JSON.stringify({
-//     title: "Купить молоко",
-//     completed: false
-//   })
-// })
-// .then(response => response.json())
-// .then(data => JSON.stringify(data))

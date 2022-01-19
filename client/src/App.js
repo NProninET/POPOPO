@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
-import { ToastContainer, toast } from "react-toastify";
+import {
+  tasksLoad,
+  toggleAllTasks,
+  deleteCompletedTasks,
+} from "./reducers/actions";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function App() {
-  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
+
+  const tasks = useSelector((state) => {
+    const { appReducer } = state;
+    return appReducer.tasks;
+  });
+
+  console.log(tasks);
+
+  const dispatch = useDispatch();
 
   toast.configure();
 
-  const apiURI = "http://localhost:8000/api/todo";
-
-  async function getMyTasks() {
-    const response = await axios.get(apiURI);
-    setTasks(response.data);
-  }
-
   useEffect(() => {
-    getMyTasks();
+    dispatch(tasksLoad());
   }, []);
 
   const FILTER_MAP = {
@@ -48,70 +55,8 @@ export function App() {
         id={task._id}
         title={task.title}
         completed={task.completed}
-        toggleCompletedTask={toggleCompletedTask}
-        deleteTask={deleteTask}
-        editTask={editTask}
       />
     ));
-
-  async function deleteTask(id) {
-    await axios.delete(`${apiURI}/${id}`).then(() => {
-      const deleteTask = tasks.filter((task) => id !== task._id);
-      setTasks(deleteTask);
-      toast.error("Todo deleted successfully", {
-        position: toast.POSITION.TOP_RIGHT,
-        hideProgressBar: true,
-      });
-    });
-  }
-
-  async function editTask(id, newName) {
-    await axios.put(`${apiURI}/${id}`, { title: newName }).then(() => {
-      const editedTaskList = tasks.map((task) => {
-        if (id === task._id) {
-          return { ...task, title: newName.trim() };
-        }
-        return task;
-      });
-      setTasks(editedTaskList);
-    });
-    toast.dismiss("Edit");
-  }
-
-  async function addTask(title) {
-    await axios.post(`${apiURI}`, { title: title }).then((response) => {
-      const newTask = response.data.data;
-      setTasks([...tasks, newTask]);
-      toast.success(`${title} added successfully`, {
-        position: toast.POSITION.TOP_RIGHT,
-        hideProgressBar: true,
-      });
-    });
-  }
-
-  async function deleteCompletedTasks() {
-    await axios
-      .delete(apiURI)
-      .then(setTasks(tasks.filter((todoItem) => !todoItem.completed)));
-    toast.error("Todos deleted successfully", {
-      position: toast.POSITION.TOP_RIGHT,
-      hideProgressBar: true,
-    });
-  }
-
-  async function toggleCompletedTask(id, completed) {
-    await axios
-      .put(`${apiURI}/${id}`, { completed: !completed })
-      .then((res) => {
-        const updatedTasks = tasks.map((task) => {
-          if (id === task._id) {
-            return { ...task, completed: !task.completed };
-          }
-          return task;
-        });
-        setTasks(updatedTasks);
-      });
-  }
 
   const tasksNoun = taskList.length !== 1 ? "items" : "item";
   const headingText = `${
@@ -120,27 +65,20 @@ export function App() {
 
   const allChecked = tasks.every((c) => c.completed);
 
-  async function checkAll() {
-    await axios.put(`${apiURI}`, { allChecked: !allChecked }).then((res) => {
-      setTasks(
-        tasks.map((d) => {
-          return { ...d, completed: !allChecked };
-        })
-      );
-    });
-  }
-
   return (
     <>
       <h1 className="todosHeader">todos </h1>
       <ul role="list" className="todo-list" aria-labelledby="list-heading">
-        <Form addTask={addTask} />
+        <Form />
         {taskList}
         {tasks.length ? (
           <div className="main-buttons">
             <div className="heading-text">{headingText}</div>
             <div className="filter-buttons">{filterList}</div>
-            <button className="clear-all" onClick={deleteCompletedTasks}>
+            <button
+              onClick={() => dispatch(deleteCompletedTasks())}
+              className="clear-all"
+            >
               Clear completed
             </button>
           </div>
@@ -153,7 +91,7 @@ export function App() {
               type="checkbox"
               id="icon-checkbox"
               className="allToggler"
-              onClick={checkAll}
+              onClick={() => dispatch(toggleAllTasks(allChecked))}
             ></input>
             <label
               className={
@@ -163,7 +101,6 @@ export function App() {
               }
               htmlFor="icon-checkbox"
             ></label>
-            {/* {allChecked ? black : gray} */}
           </div>
         ) : (
           <div></div>

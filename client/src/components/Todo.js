@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteTask, toggleTask, updateTask } from "../reducers/actions";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Todo(props) {
   const [isEditing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(props.title);
   const [title, setTitle] = useState(props.title);
+
+  const tasks = useSelector(state => {
+    const { appReducer } = state;
+    return appReducer.tasks;
+  });
+
+  const dispatch = useDispatch()
 
   function handleChange(e) {
     const toastId = "Edit";
@@ -22,9 +31,11 @@ function Todo(props) {
     if (newTitle.trim() === "") {
       setEditing(false);
     } else {
-      props.editTask(props.id, newTitle.trim());
+      console.log(props.id, newTitle)
+      // setTitle(newTitle.trim());
+      dispatch(updateTask(props.id, newTitle));
 
-      setTitle(newTitle.trim());
+      
       setEditing(false);
       toast.info("Todo has been updated", { hideProgressBar: true });
     }
@@ -44,8 +55,8 @@ function Todo(props) {
             id={props.id}
             type="checkbox"
             className="todo-item-checkbox"
-            checked={props.completed}
-            onChange={() => props.toggleCompletedTask(props.id)}
+            // checked={props.completed}
+            // onChange={() => props.toggleCompletedTask(props.id)}
           />
           <span className="custom-checkbox"></span>
         </label>
@@ -71,7 +82,7 @@ function Todo(props) {
           type="checkbox"
           className="todo-item-checkbox"
           checked={props.completed}
-          onChange={() => props.toggleCompletedTask(props.id, props.completed)}
+          onChange={() => dispatch(toggleTask(props.id, props.completed))}
         />
         <span className="custom-checkbox"></span>
         {props.title}
@@ -81,7 +92,7 @@ function Todo(props) {
       <label
         className="todo-danger"
         htmlFor={props.id}
-        onClick={() => props.deleteTask(props.id)}
+        onClick={() => dispatch(deleteTask(props.id))}
       ></label>
     </div>
   );
