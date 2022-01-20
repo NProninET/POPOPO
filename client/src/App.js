@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
+import { FILTER_MAP, FILTER_NAMES } from "./reducers/actions";
 import {
-  tasksLoad,
+  loadTasks,
   toggleAllTasks,
   deleteCompletedTasks,
 } from "./reducers/actions";
@@ -13,38 +13,31 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function App() {
-  const [filter, setFilter] = useState("All");
-
   const tasks = useSelector((state) => {
     const { appReducer } = state;
     return appReducer.tasks;
   });
 
-  console.log(tasks);
+  const filter = useSelector((state) => {
+    const { appReducer } = state;
+    return appReducer.filter;
+  });
+
+  const allChecked = useSelector((state) => {
+    const { appReducer } = state;
+    return appReducer.allChecked;
+  });
 
   const dispatch = useDispatch();
 
   toast.configure();
 
   useEffect(() => {
-    dispatch(tasksLoad());
+    dispatch(loadTasks());
   }, []);
 
-  const FILTER_MAP = {
-    All: () => true,
-    Active: (task) => !task.completed,
-    Completed: (task) => task.completed,
-  };
-
-  const FILTER_NAMES = Object.keys(FILTER_MAP);
-
   const filterList = FILTER_NAMES.map((title) => (
-    <FilterButton
-      key={title}
-      title={title}
-      isPressed={title === filter}
-      setFilter={setFilter}
-    />
+    <FilterButton key={title} title={title} />
   ));
 
   const taskList = tasks
@@ -62,9 +55,6 @@ export function App() {
   const headingText = `${
     tasks.filter((task) => !task.completed).length
   } ${tasksNoun} left`;
-
-  const allChecked = tasks.every((c) => c.completed);
-
   return (
     <>
       <h1 className="todosHeader">todos </h1>

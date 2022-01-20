@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-  TASKS_LOAD,
+  LOAD_TASKS,
   ADD_TASK,
   DELETE_TASK,
   TOGGLE_TASK,
@@ -11,79 +11,130 @@ import {
 
 const apiURI = "http://localhost:8000/api/todo";
 
-export function tasksLoad() {
+export const FILTER_MAP = {
+  All: () => true,
+  Active: (task) => !task.completed,
+  Completed: (task) => task.completed,
+};
+
+export const FILTER_NAMES = Object.keys(FILTER_MAP);
+
+export function loadTasks() {
   return async (dispatch) => {
     const response = await axios.get(apiURI);
-    dispatch({
-      type: TASKS_LOAD,
-      tasks: response.data,
-    });
+    const allChecked = response.data.every((task) => task.completed);
+    try {
+      dispatch({
+        type: LOAD_TASKS,
+        tasks: response.data,
+        allChecked,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function filterFilter(filter) {
+  return async (dispatch) => {
+    const response = await axios.get(apiURI);
+    try {
+      dispatch({
+        type: LOAD_TASKS,
+        tasks: response.data,
+        filter,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 
 export function addTask(title) {
   return async (dispatch) => {
-    await axios.post(`${apiURI}`, { title: title }).then((response) => {
-      dispatch({
-        type: ADD_TASK,
-        tasks: response.data.data,
-      });
+    axios.post(`${apiURI}`, { title }).then((response) => {
+      try {
+        dispatch({
+          type: ADD_TASK,
+          task: response.data.data,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 }
 
 export function deleteTask(id) {
   return async (dispatch) => {
-    await axios.delete(`${apiURI}/${id}`).then((response) => {
-      dispatch({
-        type: DELETE_TASK,
-        id,
-      });
+    axios.delete(`${apiURI}/${id}`).then(() => {
+      try {
+        dispatch({
+          type: DELETE_TASK,
+          id,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 }
 
 export function toggleTask(id, completed) {
   return async (dispatch) => {
-    await axios
-      .put(`${apiURI}/${id}`, { completed: !completed })
-      .then((res) => {
+    axios.put(`${apiURI}/${id}`, { completed: !completed }).then(() => {
+      try {
         dispatch({
           type: TOGGLE_TASK,
           id,
           completed: !completed,
         });
-      });
+      } catch (error) {
+        console.log(error);
+      }
+    });
   };
 }
 
 export function deleteCompletedTasks() {
   return async (dispatch) => {
-    await axios.delete(apiURI).then((res) => {
-      dispatch({
-        type: DELETE_COMPLETED_TASKS,
-      });
+    axios.delete(apiURI).then(() => {
+      try {
+        dispatch({
+          type: DELETE_COMPLETED_TASKS,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 }
 
 export function updateTask(id, title) {
   return async (dispatch) => {
-    await axios.put(`${apiURI}/${id}`, { title: title }).then(() => {
-      dispatch({
-        type: UPDATE_TASK,
-        data: { id, title },
-      });
+    axios.put(`${apiURI}/${id}`, { title }).then(() => {
+      try {
+        dispatch({
+          type: UPDATE_TASK,
+          data: { id, title },
+        });
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 }
 
 export function toggleAllTasks(allChecked) {
   return async (dispatch) => {
-    await axios.put(`${apiURI}`, { allChecked: !allChecked }).then((res) => {
-      dispatch({
-        type: TOGGLE_ALL_TASKS,
-      });
+    axios.put(`${apiURI}`, { allChecked: !allChecked }).then(() => {
+      try {
+        dispatch({
+          type: TOGGLE_ALL_TASKS,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 }

@@ -1,5 +1,5 @@
 import {
-  TASKS_LOAD,
+  LOAD_TASKS,
   ADD_TASK,
   DELETE_TASK,
   TOGGLE_TASK,
@@ -10,69 +10,73 @@ import {
 
 const initialState = {
   tasks: [],
-  filter: 'All'
+  filter: "All",
+  allChecked: false,
 };
 
 export const appReducer = (state = initialState, action) => {
-  const allChecked = state.tasks.every((c) => c.completed);
-
   const { tasks } = state;
-  const { id } = action;
-  console.log("Tasks >>>", action);
-  switch (action.type) {
-    case TASKS_LOAD:
-      return {
-        tasks: action.tasks,
-      };
+  const { type, ...payload } = action;
+
+  switch (type) {
+    case LOAD_TASKS:
+      return { ...state, ...payload };
 
     case ADD_TASK:
       return {
         ...state,
-        tasks: [...tasks, action.tasks],
+        tasks: [...tasks, payload.task],
+        allChecked: false,
       };
 
     case DELETE_TASK:
       return {
         ...state,
-        tasks: tasks.filter((task) => id !== task._id),
+        tasks: tasks.filter((task) => payload.id !== task._id),
       };
 
     case TOGGLE_TASK:
       const updatedTasks = tasks.map((task) => {
-        if (id === task._id) {
-          return { ...task, completed: !task.completed };
-        }
-        return task;
+        return {
+          ...task,
+          completed: payload.id === task._id ? !task.completed : task.completed,
+        };
       });
+
       return {
         ...state,
         tasks: [...updatedTasks],
+        allChecked: updatedTasks.every((c) => c.completed),
       };
 
     case UPDATE_TASK:
-      const { data } = action;
+      const {
+        data: { id, title },
+      } = payload;
       const editedTaskList = tasks.map((task) => {
-        if (data.id === task._id) {
-          return { ...task, title: data.title };
+        if (id === task._id) {
+          return { ...task, title };
         }
         return task;
       });
 
       return {
         ...state,
-        tasks: [...editedTaskList]
+        tasks: [...editedTaskList],
       };
 
     case TOGGLE_ALL_TASKS:
-      const allChecked = tasks.every((c) => c.completed);
+      let allChecked = tasks.every((c) => c.completed);
+
+      console.log(allChecked);
       const updatTasks = tasks.map((task) => {
         return { ...task, completed: !allChecked };
-      })
+      });
       return {
-          ...state,
-          tasks: [...updatTasks]
-
-      }
+        ...state,
+        tasks: [...updatTasks],
+        allChecked: !allChecked,
+      };
 
     case DELETE_COMPLETED_TASKS:
       const deletedTasks = tasks.filter((todoItem) => !todoItem.completed);

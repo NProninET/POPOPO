@@ -1,11 +1,14 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { filterFilter } from "../reducers/actions";
 
 function FilterButton(props) {
+  let dispatch = useDispatch();
+
   return (
     <button
       type="button"
-      aria-pressed={props.isPressed}
-      onClick={() => props.setFilter(props.title)}
+      onClick={() => dispatch(filterFilter(props.title))}
       className="filtered-buttons"
     >
       {props.title}
