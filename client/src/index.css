@@ -248,3 +248,33 @@ li[completed="true"] label {
 .gray-chevron {
   color: #e9e9e9;
 }
+
+.colorItem {
+  height: 16px;
+  width: 16px;
+  border-radius: 3px;
+}
+
+div.color-red {
+  background-color: #f06d69;
+}
+
+div.color-pink {
+  background-color: #f379a2;
+}
+
+div.color-purple {
+  background-color: #9170cb;
+}
+
+div.color-blue {
+  background-color: #5eb3f6;
+}
+
+div.color-green {
+  background-color: #67d7e5;
+}
+
+div.color-yellow {
+  background-color: #f9e094;
+}

@@ -3,11 +3,22 @@ import { useDispatch } from "react-redux";
 import { deleteTask, toggleTask, updateTask } from "../reducers/actions";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BasicSelect from "./BasicSelect";
 
 function Todo(props) {
   const [isEditing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(props.title);
   const [title, setTitle] = useState(props.title);
+  const [color, setColor] = useState(props.color);
+
+  console.log(color)
+
+  const handleChangeColor = (newColor) => {
+    setColor(newColor)
+    dispatch(updateTask(props.id, title, newColor));
+  }
+
+
 
   const dispatch = useDispatch();
 
@@ -26,7 +37,6 @@ function Todo(props) {
     if (newTitle.trim() === "") {
       setEditing(false);
     } else {
-      console.log(props.id, newTitle);
       setTitle(newTitle.trim());
       dispatch(updateTask(props.id, newTitle));
 
@@ -43,9 +53,9 @@ function Todo(props) {
 
   const editingTemplate = (
     <form className="todo-edit" onSubmit={handleSubmit}>
-      <div className="todo-item">
+      <div className="todo-item" style={{backgroundColor: color, opacity: 0.5}}>
         <label className="todo-item-label" htmlFor={props.id}>
-          <input id={props.id} type="checkbox" className="todo-item-checkbox" />
+          <input id={props.id} type="checkbox" className="todo-item-checkbox" style={{backgroundColor: color}} />
           <span className="custom-checkbox"></span>
         </label>
         <label className="todo-label" htmlFor={props.id}></label>
@@ -57,13 +67,14 @@ function Todo(props) {
           value={newTitle}
           onBlur={cancelChanges}
           autoFocus={true}
+          style={{backgroundColor: color}}
         />
       </div>
     </form>
   );
 
   const viewTemplate = (
-    <div className="todo-item" onDoubleClick={() => setEditing(true)}>
+    <div className="todo-item" style={{backgroundColor: color, opacity: 0.5}} onDoubleClick={() => setEditing(true)}>
       <label className="todo-item-label" htmlFor={props.id}>
         <input
           id={props.id}
@@ -82,6 +93,7 @@ function Todo(props) {
         htmlFor={props.id}
         onClick={() => dispatch(deleteTask(props.id))}
       ></label>
+      <BasicSelect onChange={handleChangeColor}/>
     </div>
   );
 

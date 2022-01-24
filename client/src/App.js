@@ -46,6 +46,7 @@ export function App() {
       <Todo
         key={task._id}
         id={task._id}
+        color={task.color}
         title={task.title}
         completed={task.completed}
       />

@@ -12,6 +12,7 @@ const initialState = {
   tasks: [],
   filter: "All",
   allChecked: false,
+  // color: ""
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -19,7 +20,9 @@ export const appReducer = (state = initialState, action) => {
   const { type, ...payload } = action;
 
   switch (type) {
+    
     case LOAD_TASKS:
+      console.log('action >>>>', action)
       return { ...state, ...payload };
 
     case ADD_TASK:
@@ -51,11 +54,11 @@ export const appReducer = (state = initialState, action) => {
 
     case UPDATE_TASK:
       const {
-        data: { id, title },
+        data: { id, title, color },
       } = payload;
       const editedTaskList = tasks.map((task) => {
         if (id === task._id) {
-          return { ...task, title };
+          return { ...task, title, color };
         }
         return task;
       });

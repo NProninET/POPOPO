@@ -110,13 +110,13 @@ export function deleteCompletedTasks() {
   };
 }
 
-export function updateTask(id, title) {
+export function updateTask(id, title, color) {
   return async (dispatch) => {
-    axios.put(`${apiURI}/${id}`, { title }).then(() => {
+    axios.put(`${apiURI}/${id}`, { color, title }).then(() => {
       try {
         dispatch({
           type: UPDATE_TASK,
-          data: { id, title },
+          data: { id, title, color },
         });
       } catch (error) {
         console.log(error);
