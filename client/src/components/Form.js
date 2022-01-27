@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addTask } from "../reducers/actions";
+import { useDispatch } from "react-redux";
+import { addTask } from "../store/taskSlice";
 
-function Form(props) {
+function Form() {
   const [name, setName] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   function handleChange(e) {
     const value = e.target.value;
@@ -19,7 +19,6 @@ function Form(props) {
       setName("");
     } else {
       setName("");
-      alert("Не может быть пустым");
     }
   }
   return (

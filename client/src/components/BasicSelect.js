@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { createTheme } from "@mui/material/styles";
-import { pink, red, blue, teal, cyan, yellow, magenta } from "@mui/material/colors";
+import { pink, red, blue, teal, cyan, yellow } from "@mui/material/colors";
 
 const palette = {
   red: {
@@ -28,30 +27,28 @@ const palette = {
   },
 };
 const theme = createTheme({
-  palette
+  palette,
 });
 
 export default function BasicSelect({ onChange }) {
   const changeColor = (e) => {
     onChange(e.target.style.backgroundColor);
   };
-  const menuItems = Object.keys(palette).map( i => (
+  const menuItems = Object.keys(palette).map((i) => (
     <MenuItem
-    sx={{ width: 50, height: 20 }}
-    value={theme.palette.red.main}
-    style={{backgroundColor: palette[i].main}}
+      sx={{ width: 50, height: 20 }}
+      style={{ backgroundColor: palette[i].main }}
     />
-  ))
+  ));
 
   return (
-
     <Box sx={{ width: 30, height: 50 }}>
       <FormControl fullWidth>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           onClick={changeColor}
-          defaultValue=''
+          defaultValue=""
         >
           {menuItems}
         </Select>

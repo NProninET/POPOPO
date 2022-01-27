@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteTask, toggleTask, updateTask } from "../reducers/actions";
+import { deleteTask, toggleTask, updateTask } from "../store/taskSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BasicSelect from "./BasicSelect";
@@ -11,14 +11,10 @@ function Todo(props) {
   const [title, setTitle] = useState(props.title);
   const [color, setColor] = useState(props.color);
 
-  console.log(color)
-
   const handleChangeColor = (newColor) => {
-    setColor(newColor)
-    dispatch(updateTask(props.id, title, newColor));
-  }
-
-
+    setColor(newColor);
+    dispatch(updateTask({ id: props.id, title: title, color: newColor }));
+  };
 
   const dispatch = useDispatch();
 
@@ -38,7 +34,7 @@ function Todo(props) {
       setEditing(false);
     } else {
       setTitle(newTitle.trim());
-      dispatch(updateTask(props.id, newTitle));
+      dispatch(updateTask({ id: props.id, title: newTitle, color: color }));
 
       setEditing(false);
       toast.info("Todo has been updated", { hideProgressBar: true });
@@ -53,9 +49,17 @@ function Todo(props) {
 
   const editingTemplate = (
     <form className="todo-edit" onSubmit={handleSubmit}>
-      <div className="todo-item" style={{backgroundColor: color, opacity: 0.5}}>
+      <div
+        className="todo-item"
+        style={{ backgroundColor: color, opacity: 0.5 }}
+      >
         <label className="todo-item-label" htmlFor={props.id}>
-          <input id={props.id} type="checkbox" className="todo-item-checkbox" style={{backgroundColor: color}} />
+          <input
+            id={props.id}
+            type="checkbox"
+            className="todo-item-checkbox"
+            style={{ backgroundColor: color }}
+          />
           <span className="custom-checkbox"></span>
         </label>
         <label className="todo-label" htmlFor={props.id}></label>
@@ -67,21 +71,27 @@ function Todo(props) {
           value={newTitle}
           onBlur={cancelChanges}
           autoFocus={true}
-          style={{backgroundColor: color}}
+          style={{ backgroundColor: color }}
         />
       </div>
     </form>
   );
 
   const viewTemplate = (
-    <div className="todo-item" style={{backgroundColor: color, opacity: 0.5}} onDoubleClick={() => setEditing(true)}>
+    <div
+      className="todo-item"
+      style={{ backgroundColor: color, opacity: 0.5 }}
+      onDoubleClick={() => setEditing(true)}
+    >
       <label className="todo-item-label" htmlFor={props.id}>
         <input
           id={props.id}
           type="checkbox"
           className="todo-item-checkbox"
           checked={props.completed}
-          onChange={() => dispatch(toggleTask(props.id, props.completed))}
+          onChange={() =>
+            dispatch(toggleTask({ id: props.id, completed: props.completed }))
+          }
         />
         <span className="custom-checkbox"></span>
         {props.title}
@@ -93,7 +103,7 @@ function Todo(props) {
         htmlFor={props.id}
         onClick={() => dispatch(deleteTask(props.id))}
       ></label>
-      <BasicSelect onChange={handleChangeColor}/>
+      <BasicSelect onChange={handleChangeColor} />
     </div>
   );
 
