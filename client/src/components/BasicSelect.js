@@ -36,6 +36,7 @@ export default function BasicSelect({ onChange }) {
   };
   const menuItems = Object.keys(palette).map((i) => (
     <MenuItem
+      key={{ backgroundColor: palette[i].main }}
       sx={{ width: 50, height: 20 }}
       style={{ backgroundColor: palette[i].main }}
     />

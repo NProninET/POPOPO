@@ -1,35 +1,28 @@
-import { getFormControlUnstyledUtilityClasses } from "@mui/material";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const apiURI = "http://localhost:8000/api/todo";
 
-export const loadTasks = createAsyncThunk("tasks/loadTasks", async function () {
+export const loadTasks = createAsyncThunk("tasks/loadTasks", async () => {
   const response = await axios.get(apiURI);
   const data = response.data;
   return data;
 });
 
-export const addTask = createAsyncThunk(
-  "tasks/addTask",
-  async function (title) {
-    const response = await axios.post(`${apiURI}`, { title });
-    return response.data.data;
-  }
-);
+export const addTask = createAsyncThunk("tasks/addTask", async (title) => {
+  const response = await axios.post(`${apiURI}`, { title });
+  return response.data.data;
+});
 
-export const deleteTask = createAsyncThunk(
-  "tasks/deleteTask",
-  async function (id) {
-    const response = await axios.delete(`${apiURI}/${id}`);
+export const deleteTask = createAsyncThunk("tasks/deleteTask", async (id) => {
+  const response = await axios.delete(`${apiURI}/${id}`);
 
-    return response.data.data;
-  }
-);
+  return response.data.data;
+});
 
 export const toggleTask = createAsyncThunk(
   "tasks/toggleTask",
-  async function ({ id, completed }) {
+  async ({ id, completed }) => {
     const response = await axios.put(`${apiURI}/${id}`, {
       completed: !completed,
     });
@@ -39,7 +32,7 @@ export const toggleTask = createAsyncThunk(
 
 export const updateTask = createAsyncThunk(
   "tasks/updateTask",
-  async function ({ id, title, color }) {
+  async ({ id, title, color }) => {
     await axios.put(`${apiURI}/${id}`, { title, color });
     const data = { id, title, color };
     return data;
@@ -48,24 +41,23 @@ export const updateTask = createAsyncThunk(
 
 export const toggleAllTasks = createAsyncThunk(
   "tasks/toggleAllTasks",
-  async function (allChecked) {
+  async (allChecked) => {
     await axios.put(`${apiURI}`, { allChecked: !allChecked });
     const data = !allChecked;
-    console.log(data);
     return data;
   }
 );
 
 export const deleteCompletedTasks = createAsyncThunk(
   "tasks/deleteCompletedTasks",
-  async function () {
+  async () => {
     await axios.delete(apiURI);
   }
 );
 
 export const filterTasks = createAsyncThunk(
   "tasks/filterTasks",
-  async function (filter) {
+  async (filter) => {
     return filter;
   }
 );
@@ -94,10 +86,11 @@ const taskSlice = createSlice({
       })
       .addCase(addTask.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
+        state.allChecked = state.tasks.every((c) => c.completed);
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
         state.tasks = state.tasks.filter(
-          (task) => action.payload._id !== task._id
+          (task) => task._id !== action.payload._id
         );
       })
       .addCase(toggleTask.fulfilled, (state, action) => {
@@ -111,6 +104,7 @@ const taskSlice = createSlice({
           };
         });
         state.tasks = updatedTasks;
+        state.allChecked = state.tasks.every((c) => c.completed);
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         const { id, ...data } = action.payload;
@@ -126,7 +120,6 @@ const taskSlice = createSlice({
         const updatedTasks = state.tasks.map((task) => {
           return { ...task, completed: action.payload };
         });
-
         state.tasks = updatedTasks;
         state.allChecked = action.payload;
       })
