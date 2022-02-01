@@ -16,7 +16,6 @@ export const addTask = createAsyncThunk("tasks/addTask", async (title) => {
 
 export const deleteTask = createAsyncThunk("tasks/deleteTask", async (id) => {
   const response = await axios.delete(`${apiURI}/${id}`);
-
   return response.data.data;
 });
 
@@ -82,7 +81,8 @@ const taskSlice = createSlice({
     builder
       .addCase(loadTasks.fulfilled, (state, action) => {
         state.tasks = action.payload;
-        state.allChecked = state.tasks.every((c) => c.completed);
+        state.allChecked =
+          state.tasks.every((c) => c.completed) && state.tasks.length !== 0;
       })
       .addCase(addTask.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
@@ -92,6 +92,8 @@ const taskSlice = createSlice({
         state.tasks = state.tasks.filter(
           (task) => task._id !== action.payload._id
         );
+        state.allChecked =
+          state.tasks.every((c) => c.completed) && state.tasks.length !== 0;
       })
       .addCase(toggleTask.fulfilled, (state, action) => {
         const updatedTasks = state.tasks.map((task) => {
@@ -104,7 +106,8 @@ const taskSlice = createSlice({
           };
         });
         state.tasks = updatedTasks;
-        state.allChecked = state.tasks.every((c) => c.completed);
+        state.allChecked =
+          state.tasks.every((c) => c.completed) && state.tasks.length !== 0;
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         const { id, ...data } = action.payload;
@@ -126,6 +129,8 @@ const taskSlice = createSlice({
       .addCase(deleteCompletedTasks.fulfilled, (state) => {
         const deletedTasks = state.tasks.filter((task) => !task.completed);
         state.tasks = deletedTasks;
+        state.allChecked =
+          state.tasks.every((c) => c.completed) && state.tasks.length !== 0;
       })
       .addCase(filterTasks.fulfilled, (state, action) => {
         state.filter = action.payload;
